@@ -6,15 +6,22 @@
 		<title>URP Rocket Data</title>
 	</head>
 	<body>
-        <button onclick="myFunction()">Click me</button>
+        <button onclick="myFunction()">Toggle Valve 1</button>
         <script>
   
         function myFunction() {
             var retval = {
-                field1: "hi",
-                field2: "world"
+                cmd: "toggle",
+                arg0: "valve1"
             }
-            $.post("/outgoing", retval);
+            $.ajax
+            ({
+              type: "POST",
+              url: "/cmd",
+              dataType: 'json',
+              async: false,
+              data: JSON.stringify(retval)
+            })
         }
 
 	</script>
