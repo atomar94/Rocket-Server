@@ -3,7 +3,7 @@ import re
 import random
 import requests
 
-HOST_NAME = "10.10.10.1"
+HOST_NAME = "10.10.10.2"
 PORT_NUMBER = 8000
 
 
@@ -54,13 +54,13 @@ class CommandServer(http.server.SimpleHTTPRequestHandler):
         print(s.client_address[0], end="")
         print(":", end="")
         print(s.client_address[1], end="")
-        print(" > ")
+        print(" > ", end="")
         print("POST req with ", end="")
         s.data_string = s.rfile.read(int(s.headers['Content-Length']))
 
         print(s.data_string)
-        if(s.valve_handle in s.path):
-            requests.post("10.10.10.3:8000", s.data_string)
+        if(s.outgoing_handle in s.path):
+            requests.post("http://10.10.10.3:8000/", s.data_string)
             print("POST sent to 10.10.10.3")
         s.send_response(200)
         #http.server.SimpleHTTPRequestHandler.do_POST(s)
