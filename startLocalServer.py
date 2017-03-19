@@ -3,21 +3,31 @@ import re
 import random
 
 HOST_NAME = "127.00.0.1"
-PORT_NUMBER = 9000
+PORT_NUMBER = 8000
 
 
 #returns most recent thrust sensor data
 def latestThrustSensorData():
-	return str(random.randrange(100))
+    return str(random.randrange(100))
 
-class MyHandler(http.server.SimpleHTTPRequestHandler):
+
+class CommandServer(http.server.SimpleHTTPRequestHandler):
+
+    #in the future this should delete stale values after a set amount of time
+    #and devices should be in charge of heartbeating
+    address_table = {} #servername -> IP addr.
+    vcb1_pattern = re.compile("vcb1-server")
+    tcb1_pattern = re.compile("tcb1-server")
     def do_HEAD(s):
         s.send_response(200)
-        s.send_header("Content-type", "text/html")
         s.end_headers()
 
     def do_GET(s):
-        print("GET Request for: " + s.path)
+        print("Fields:")
+        print("Client addr, port", end="")
+        print(s.client_address)
+        print("Path: " + s.path)
+
         thrustSensorRegex = re.compile("thrustSensor")
         #if we found  a thrustSensor update request
         if(re.search(thrustSensorRegex, s.path) != None):
@@ -28,7 +38,12 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
 if __name__ == "__main__":
     server_class = http.server.HTTPServer
     defaultHandler = http.server.SimpleHTTPRequestHandler
-    httpd = server_class((HOST_NAME, PORT_NUMBER), MyHandler)
+    httpd = server_class((HOST_NAME, PORT_NUMBER), CommandServer)
+    while True:
+        print("in while loop")
+        httpd.handle_one_request()
+
+    #in the future this could have a command line? that would be cool
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
