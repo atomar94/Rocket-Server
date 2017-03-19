@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<script src="libraries/jquery-1.11.3.min.js"></script>
+		<title>URP Rocket Data</title>
+	</head>
+	<body>
+        <button onclick="myFunction()">Click me</button>
+        <script>
+  
+        function myFunction() {
+            var retval = {
+                field1: "hi",
+                field2: "world"
+            }
+            $.post("/command", retval);
+        }
+
+	</script>
+	</body>
+</html>
