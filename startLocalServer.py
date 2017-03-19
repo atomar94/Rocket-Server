@@ -13,6 +13,7 @@ def latestThrustSensorData():
 
 class CommandServer(http.server.SimpleHTTPRequestHandler):
 
+   
     #in the future this should delete stale values after a set amount of time
     #and devices should be in charge of heartbeating
     address_table = {} #servername -> IP addr.
@@ -27,7 +28,8 @@ class CommandServer(http.server.SimpleHTTPRequestHandler):
         print("Client addr, port", end="")
         print(s.client_address)
         print("Path: " + s.path)
-
+        print("Server: ", end="")
+        print(s.server)
         thrustSensorRegex = re.compile("thrustSensor")
         #if we found  a thrustSensor update request
         if(re.search(thrustSensorRegex, s.path) != None):
@@ -40,12 +42,12 @@ if __name__ == "__main__":
     defaultHandler = http.server.SimpleHTTPRequestHandler
     httpd = server_class((HOST_NAME, PORT_NUMBER), CommandServer)
     while True:
-        print("in while loop")
-        httpd.handle_one_request()
+        httpd.handle_request()
 
-    #in the future this could have a command line? that would be cool
-    try:
-        httpd.serve_forever()
-    except KeyboardInterrupt:
-        pass
     httpd.server_close()
+    #in the future this could have a command line? that would be cool
+    #try:
+    #    httpd.serve_forever()
+    #except KeyboardInterrupt:
+    #    pass
+    #httpd.server_close()
