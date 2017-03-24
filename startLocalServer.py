@@ -19,23 +19,35 @@ class CommandServer(http.server.SimpleHTTPRequestHandler):
     address_table = {} #servername -> IP addr.
     vcb1_pattern = re.compile("vcb1-server")
     tcb1_pattern = re.compile("tcb1-server")
-    def do_HEAD(s):
-        s.send_response(200)
-        s.end_headers()
+
+    #routes
+    vcb1_handle = "/vcb1-server"
+    heartbeat_handle = "/heartbeat"
+    valve_handle = "/valves"
 
     def do_GET(s):
-        print("Fields:")
-        print("Client addr, port", end="")
-        print(s.client_address)
-        print("Path: " + s.path)
-        print("Server: ", end="")
-        print(s.server)
-        thrustSensorRegex = re.compile("thrustSensor")
-        #if we found  a thrustSensor update request
-        if(re.search(thrustSensorRegex, s.path) != None):
-            s.wfile.write(bytes(latestThrustSensorData(), "UTF-8"))
+        print(s.client_address[0], end="")
+        print(":", end"")
+        print(s.client_address[1], end="")
+        print(" > ")
+
+       if(vcb1_handle in s.path):
+            if(valve_handle in s.path):
+                print("valve update")
+            #handle
+            pass
+        elif(heartbeat_handle in s.path):
+            print("heartbeat update")
         else:
+            print("GET req for", end="")
+            print(s.path)
             http.server.SimpleHTTPRequestHandler.do_GET(s)
+            return
+        s.send_response(200)
+
+
+    def do_POST(self):
+        pass
 
 if __name__ == "__main__":
     server_class = http.server.HTTPServer
