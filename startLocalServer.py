@@ -2,7 +2,7 @@ import http.server
 import re
 import random
 
-HOST_NAME = "127.00.0.1"
+HOST_NAME = "10.10.10.1"
 PORT_NUMBER = 8000
 
 
@@ -27,16 +27,16 @@ class CommandServer(http.server.SimpleHTTPRequestHandler):
 
     def do_GET(s):
         print(s.client_address[0], end="")
-        print(":", end"")
+        print(":", end="")
         print(s.client_address[1], end="")
         print(" > ")
 
-       if(vcb1_handle in s.path):
-            if(valve_handle in s.path):
+        if(s.vcb1_handle in s.path):
+            if(s.valve_handle in s.path):
                 print("valve update")
             #handle
             pass
-        elif(heartbeat_handle in s.path):
+        elif(s.heartbeat_handle in s.path):
             print("heartbeat update")
         else:
             print("GET req for", end="")
@@ -46,8 +46,19 @@ class CommandServer(http.server.SimpleHTTPRequestHandler):
         s.send_response(200)
 
 
-    def do_POST(self):
-        pass
+    def do_POST(s):
+        print(s.client_address[0], end="")
+        print(":", end="")
+        print(s.client_address[1], end="")
+        print(" > ")
+        print("POST req with ", end="")
+        s.data_string = s.rfile.read(int(s.headers['Content-Length']))
+
+        print(s.data_string)
+        s.send_response(200)
+        #http.server.SimpleHTTPRequestHandler.do_POST(s)
+        return
+
 
 if __name__ == "__main__":
     server_class = http.server.HTTPServer
